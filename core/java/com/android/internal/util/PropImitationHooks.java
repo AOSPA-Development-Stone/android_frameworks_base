@@ -36,6 +36,8 @@ import com.android.internal.R;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PropImitationHooks {
 
@@ -48,6 +50,18 @@ public class PropImitationHooks {
     private static final String PROCESS_GMS_UNSTABLE = PACKAGE_GMS + ".unstable";
     private static final String PACKAGE_NETFLIX = "com.netflix.mediaclient";
     private static final String PACKAGE_GPHOTOS = "com.google.android.apps.photos";
+    private static final String PACKAGE_AIWALLPAPER = "com.google.android.apps.aiwallpapers";
+    private static final String PACKAGE_EMOJIWALLPAPER = "com.google.android.apps.emojiwallpaper";
+
+    private static final Map<String, String> sPixel8ProProps = new HashMap<>();
+    static {
+        sPixel8ProProps.put("BRAND", "google");
+        sPixel8ProProps.put("MANUFACTURER", "Google");
+        sPixel8ProProps.put("DEVICE", "husky");
+        sPixel8ProProps.put("PRODUCT", "husky");
+        sPixel8ProProps.put("MODEL", "Pixel 8 Pro");
+        sPixel8ProProps.put("FINGERPRINT", "google/husky/husky:14/UD1A.230803.041/10808477:user/release-keys");
+    }
 
     private static final String PROP_SECURITY_PATCH = "persist.sys.pihooks.security_patch";
     private static final String PROP_FIRST_API_LEVEL = "persist.sys.pihooks.first_api_level";
@@ -108,6 +122,9 @@ public class PropImitationHooks {
         } else if (!sNetflixModel.isEmpty() && packageName.equals(PACKAGE_NETFLIX)) {
             dlog("Setting model to " + sNetflixModel + " for Netflix");
             setPropValue("MODEL", sNetflixModel);
+        } else if (packageName.equals(PACKAGE_AIWALLPAPER) || packageName.equals(PACKAGE_EMOJIWALLPAPER)) {
+            dlog("Setting model to Pixel 8 Pro for: " + packageName);
+            sPixel8ProProps.forEach((k, v) -> setPropValue(k, v));
         }
     }
 
