@@ -612,6 +612,9 @@ public class NavigationBarView extends FrameLayout {
         // We have to replace or restore the back and home button icons when exiting or entering
         // carmode, respectively. Recents are not available in CarMode in nav bar so change
         // to recent icon is not required.
+        boolean disableImeGesturalNavButtons =
+                !mImeCanRenderGesturalNavButtons
+                && isGesturalMode(mNavBarMode);
         final boolean useAltBack =
                 (mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_BACK_ALT) != 0;
         KeyButtonDrawable backIcon = mBackIcon;
@@ -627,7 +630,8 @@ public class NavigationBarView extends FrameLayout {
 
         // Update IME button visibility, a11y and rotate button always overrides the appearance
         boolean disableImeSwitcher =
-                (mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_IME_SWITCHER_SHOWN) == 0
+                disableImeGesturalNavButtons
+                || (mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_IME_SWITCHER_SHOWN) == 0
                 || isImeRenderingNavButtons();
         mContextualButtonGroup.setButtonVisibility(R.id.ime_switcher, !disableImeSwitcher);
 
@@ -643,7 +647,8 @@ public class NavigationBarView extends FrameLayout {
         boolean disableHomeHandle = disableRecent
                 && ((mDisabledFlags & View.STATUS_BAR_DISABLE_HOME) != 0);
 
-        boolean disableBack = !useAltBack && (mEdgeBackGestureHandler.isHandlingGestures()
+        boolean disableBack = disableImeGesturalNavButtons
+                || !useAltBack && (mEdgeBackGestureHandler.isHandlingGestures()
                 || ((mDisabledFlags & View.STATUS_BAR_DISABLE_BACK) != 0))
                 || isImeRenderingNavButtons();
 
